@@ -1,24 +1,65 @@
 // Main exports for bsv-channels package — Payment channels only
 
 export { ChannelManager } from './channels/manager.js'
-export { createMultisigScript, verifyMultisigSignature } from './channels/multisig.js'
 export { ChannelStorage } from './channels/storage.js'
-export { closeChannel } from './channels/close.js'
-export { forceCloseChannel } from './channels/force-close.js'
 export { DisputeMonitor } from './channels/dispute-monitor.js'
 
+// Multisig utilities
+export {
+  createMultisigLockingScript,
+  createSighashPreimage,
+  signInput,
+  createMultisigUnlockingScript,
+  createMultisigUnlockTemplate,
+  signCommitment,
+  verifySignature,
+  createFundingTransaction,
+  createCommitmentTransaction
+} from './channels/multisig.js'
+
+// Cooperative close
+export {
+  createCloseRequest,
+  signCloseRequest,
+  broadcastClose
+} from './channels/close.js'
+
+export type { CloseRequest, CloseAccept } from './channels/close.js'
+
+// Force close (unilateral)
+export {
+  isNLockTimeExpired,
+  isPeerUnresponsive,
+  getNLockTimeExpiry,
+  getTimeUntilExpiry,
+  broadcastCommitmentTx,
+  findChannelsNeedingForceClose,
+  getForceCloseStats,
+  DEFAULT_FORCE_CLOSE_CONFIG
+} from './channels/force-close.js'
+
+export type { ForceCloseConfig, ForceCloseResult } from './channels/force-close.js'
+
+// Channel types
 export type {
   Channel,
   ChannelState,
   ChannelConfig,
-  PendingPayment
+  PendingPayment,
+  ChannelOpenRequest,
+  ChannelOpenResponse,
+  ChannelPayment,
+  ChannelCloseRequest,
+  CommitmentTransaction
 } from './channels/types.js'
 
+// Transaction types
 export type {
   FundingTx,
   CommitmentTx,
   CloseTx,
-  RefundTx
+  RefundTx,
+  TransactionTemplate
 } from './transactions/types.js'
 
 // Transaction builders

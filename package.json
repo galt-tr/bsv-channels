@@ -17,7 +17,14 @@
     "SKILL.md",
     "extensions/"
   ],
-  "keywords": ["bsv", "bitcoin", "payment-channels", "multisig", "openclaw", "agent"],
+  "keywords": [
+    "bsv",
+    "bitcoin",
+    "payment-channels",
+    "multisig",
+    "openclaw",
+    "agent"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -25,18 +32,24 @@
   },
   "dependencies": {
     "@bsv/sdk": "^2.0.0",
-    "better-sqlite3": "^12.6.0"
+    "better-sqlite3": "^12.6.0",
+    "uuid": "^13.0.0"
   },
   "peerDependencies": {
-    "bsv-wallet": ">=0.1.0",
-    "bsv-p2p": ">=0.1.0"
+    "bsv-p2p": ">=0.1.0",
+    "bsv-wallet": ">=0.1.0"
   },
   "peerDependenciesMeta": {
-    "bsv-wallet": { "optional": false },
-    "bsv-p2p": { "optional": false }
+    "bsv-wallet": {
+      "optional": false
+    },
+    "bsv-p2p": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^25.3.0",
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
   }

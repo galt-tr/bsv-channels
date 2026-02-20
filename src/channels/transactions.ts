@@ -186,7 +186,7 @@ export function createCommitmentTransaction(params: CommitmentTxParams): Transac
   
   const tx = new Transaction()
   tx.version = 2
-  tx.nLockTime = nLockTime
+  tx.lockTime = nLockTime
   
   // Input spending the funding output
   // Use sequenceNumber for RBF-style replacement (lower sequence = newer)
@@ -272,7 +272,7 @@ export function createSettlementTransaction(params: Omit<CommitmentTxParams, 'se
   tx.inputs[0].sequence = SEQUENCE_FINAL
   
   // Settlement can be broadcast immediately (no locktime needed)
-  tx.nLockTime = 0
+  tx.lockTime = 0
   
   return tx
 }
