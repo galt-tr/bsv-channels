@@ -1,0 +1,43 @@
+{
+  "name": "bsv-channels",
+  "version": "0.1.0",
+  "description": "Trustless BSV payment channels between OpenClaw agents. 2-of-2 multisig, off-chain micropayments.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist/"
+  },
+  "files": [
+    "dist/",
+    "SKILL.md",
+    "extensions/"
+  ],
+  "keywords": ["bsv", "bitcoin", "payment-channels", "multisig", "openclaw", "agent"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/galt-tr/bsv-channels.git"
+  },
+  "dependencies": {
+    "@bsv/sdk": "^2.1.0",
+    "better-sqlite3": "^12.6.0"
+  },
+  "peerDependencies": {
+    "bsv-wallet": ">=0.1.0",
+    "bsv-p2p": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "bsv-wallet": { "optional": false },
+    "bsv-p2p": { "optional": false }
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
+  }
+}
