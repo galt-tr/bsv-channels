@@ -4,66 +4,12 @@ export { ChannelManager } from './channels/manager.js'
 export { ChannelStorage } from './channels/storage.js'
 export { DisputeMonitor } from './channels/dispute-monitor.js'
 
-// Multisig utilities
-export {
-  createMultisigLockingScript,
-  createSighashPreimage,
-  signInput,
-  createMultisigUnlockingScript,
-  createMultisigUnlockTemplate,
-  signCommitment,
-  verifySignature,
-  createFundingTransaction,
-  createCommitmentTransaction
-} from './channels/multisig.js'
+// Types
+export * from './channels/types.js'
+export * from './transactions/types.js'
 
-// Cooperative close
-export {
-  createCloseRequest,
-  signCloseRequest,
-  broadcastClose
-} from './channels/close.js'
-
-export type { CloseRequest, CloseAccept } from './channels/close.js'
-
-// Force close (unilateral)
-export {
-  isNLockTimeExpired,
-  isPeerUnresponsive,
-  getNLockTimeExpiry,
-  getTimeUntilExpiry,
-  broadcastCommitmentTx,
-  findChannelsNeedingForceClose,
-  getForceCloseStats,
-  DEFAULT_FORCE_CLOSE_CONFIG
-} from './channels/force-close.js'
-
-export type { ForceCloseConfig, ForceCloseResult } from './channels/force-close.js'
-
-// Channel types
-export type {
-  Channel,
-  ChannelState,
-  ChannelConfig,
-  PendingPayment,
-  ChannelOpenRequest,
-  ChannelOpenResponse,
-  ChannelPayment,
-  ChannelCloseRequest,
-  CommitmentTransaction
-} from './channels/types.js'
-
-// Transaction types
-export type {
-  FundingTx,
-  CommitmentTx,
-  CloseTx,
-  RefundTx,
-  TransactionTemplate
-} from './transactions/types.js'
-
-// Transaction builders
+// Transaction builders (from transactions/)
 export * from './transactions/index.js'
 
-// Direct payment fallback
-export * from './payments/direct-payment.js'
+// Don't re-export from channels/transactions.js to avoid duplicates
+// Users can import directly: import { createFundingTransaction } from 'bsv-channels/channels/transactions'
