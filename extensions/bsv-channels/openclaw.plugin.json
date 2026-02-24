@@ -1,0 +1,58 @@
+{
+  "name": "bsv-channels",
+  "version": "0.1.0",
+  "description": "BSV payment channels for trustless micropayments between agents",
+  "author": "OpenClaw",
+  "license": "MIT",
+  "main": "index.ts",
+  "dependencies": {
+    "bsv-wallet": "^2.4.0",
+    "bsv-channels": "^0.1.0"
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "walletPath": {
+        "type": "string",
+        "description": "Path to wallet directory (contains wallet-config.json)",
+        "default": "~/.openclaw/wallet"
+      },
+      "p2pAddress": {
+        "type": "string",
+        "description": "P2P node multiaddr for channel coordination (optional, auto-detects if bsv-p2p plugin enabled)"
+      },
+      "maxChannelCapacity": {
+        "type": "number",
+        "description": "Maximum channel capacity in satoshis",
+        "default": 100000
+      },
+      "minChannelCapacity": {
+        "type": "number",
+        "description": "Minimum channel capacity in satoshis",
+        "default": 1000
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "channel_open",
+      "description": "Open a payment channel with another peer"
+    },
+    {
+      "name": "channel_pay",
+      "description": "Send a payment through an open channel"
+    },
+    {
+      "name": "channel_close",
+      "description": "Close a payment channel and settle on-chain"
+    },
+    {
+      "name": "channel_list",
+      "description": "List all payment channels"
+    },
+    {
+      "name": "channel_request",
+      "description": "Request a paid service from a peer"
+    }
+  ]
+}
