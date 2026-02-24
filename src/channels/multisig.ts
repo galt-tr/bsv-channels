@@ -24,8 +24,8 @@ const { sha256 } = Hash
  * Format: OP_2 <pubkey1> <pubkey2> OP_2 OP_CHECKMULTISIG
  */
 export function createMultisigLockingScript(pubKey1: PublicKey, pubKey2: PublicKey): LockingScript {
-  const pub1DER = pubKey1.encode(true) // compressed
-  const pub2DER = pubKey2.encode(true)
+  const pub1DER = pubKey1.encode(true) as number[] // compressed
+  const pub2DER = pubKey2.encode(true) as number[]
   
   return new LockingScript([
     { op: OP.OP_2 },

@@ -41,14 +41,15 @@ export async function createDataOutput(
   // Create OP_RETURN output
   const dataBuffer = typeof data === 'string' ? Buffer.from(data, 'utf8') : data
   
+  const dataArray = Array.from(dataBuffer)
   const opReturnScript = new Script([
     { op: OP.OP_FALSE },
     { op: OP.OP_RETURN },
-    { op: dataBuffer.length, data: dataBuffer }
+    { op: dataArray.length, data: dataArray }
   ])
   
   tx.addOutput({
-    lockingScript: new LockingScript(opReturnScript.toASM()),
+    lockingScript: LockingScript.fromASM(opReturnScript.toASM()),
     satoshis: 0
   })
   

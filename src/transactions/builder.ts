@@ -96,10 +96,13 @@ export class TransactionBuilder {
     // Build m-of-n multisig script
     const scriptOps = [
       { op: OP[`OP_${required}` as keyof typeof OP] as number },
-      ...keys.map(pk => ({
-        op: pk.encode(true).length,
-        data: pk.encode(true)
-      })),
+      ...keys.map(pk => {
+        const encoded = pk.encode(true) as number[]
+        return {
+          op: encoded.length,
+          data: encoded
+        }
+      }),
       { op: OP[`OP_${keys.length}` as keyof typeof OP] as number },
       { op: OP.OP_CHECKMULTISIG }
     ]

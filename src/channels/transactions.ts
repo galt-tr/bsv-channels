@@ -36,8 +36,8 @@ export function createMultisigLockingScript(pubKeyA: string, pubKeyB: string): S
   // OP_2 <pubkey1> <pubkey2> OP_2 OP_CHECKMULTISIG
   return new Script()
     .writeOpCode(0x52)  // OP_2
-    .writeBin(Buffer.from(keys[0], 'hex'))
-    .writeBin(Buffer.from(keys[1], 'hex'))
+    .writeBin(Array.from(Buffer.from(keys[0], 'hex')))
+    .writeBin(Array.from(Buffer.from(keys[1], 'hex')))
     .writeOpCode(0x52)  // OP_2
     .writeOpCode(0xae)  // OP_CHECKMULTISIG
 }
@@ -50,8 +50,8 @@ export function createMultisigUnlockingScript(sigA: string, sigB: string): Scrip
   // Signatures must be in same order as pubkeys in locking script
   return new Script()
     .writeOpCode(0x00)  // OP_0 (dummy)
-    .writeBin(Buffer.from(sigA, 'hex'))
-    .writeBin(Buffer.from(sigB, 'hex'))
+    .writeBin(Array.from(Buffer.from(sigA, 'hex')))
+    .writeBin(Array.from(Buffer.from(sigB, 'hex')))
 }
 
 /**
@@ -239,19 +239,28 @@ export function signCommitmentTransaction(
   // Create signature for input 0 (the funding input)
   const sigHashType = TransactionSignature.SIGHASH_ALL | TransactionSignature.SIGHASH_FORKID
   
-  const preimage = tx.signaturePreimage(
-    0,  // input index
-    fundingScript,
-    BigNumber.fromNumber(fundingAmount),
-    sigHashType
-  )
+  const preimage = TransactionSignature.formatBip143({
+    sourceTXID: tx.inputs[0].sourceTXID!,
+    sourceOutputIndex: tx.inputs[0].sourceOutputIndex,
+    sourceSatoshis: fundingAmount,
+    transactionVersion: tx.version,
+    otherInputs: tx.inputs.slice(1),
+    outputs: tx.outputs,
+    inputIndex: 0,
+    subscript: fundingScript,
+    inputSequence: tx.inputs[0].sequence || 0xffffffff,
+    lockTime: tx.lockTime,
+    scope: sigHashType
+  })
   
-  const hash = Hash.sha256(preimage)
+  const hash = Hash.sha256(Array.from(preimage))
   const sig = privateKey.sign(hash)
   
   // Append sighash type
+  const sigDER = sig.toDER()
+  const sigDERBytes = typeof sigDER === 'string' ? Buffer.from(sigDER, 'hex') : Buffer.from(sigDER)
   const sigWithType = Buffer.concat([
-    sig.toDER(),
+    sigDERBytes,
     Buffer.from([sigHashType])
   ])
   
@@ -290,16 +299,23 @@ export function verifyCommitmentSignature(
   try {
     const sigBuffer = Buffer.from(signature, 'hex')
     const sigHashType = sigBuffer[sigBuffer.length - 1]
-    const sigDER = sigBuffer.slice(0, -1)
+    const sigDER = Array.from(sigBuffer.slice(0, -1))
     
-    const preimage = tx.signaturePreimage(
-      0,
-      fundingScript,
-      BigNumber.fromNumber(fundingAmount),
-      sigHashType
-    )
+    const preimage = TransactionSignature.formatBip143({
+      sourceTXID: tx.inputs[0].sourceTXID!,
+      sourceOutputIndex: tx.inputs[0].sourceOutputIndex,
+      sourceSatoshis: fundingAmount,
+      transactionVersion: tx.version,
+      otherInputs: tx.inputs.slice(1),
+      outputs: tx.outputs,
+      inputIndex: 0,
+      subscript: fundingScript,
+      inputSequence: tx.inputs[0].sequence || 0xffffffff,
+      lockTime: tx.lockTime,
+      scope: sigHashType
+    })
     
-    const hash = Hash.sha256(preimage)
+    const hash = Hash.sha256(Array.from(preimage))
     const pubKey = PublicKey.fromString(publicKey)
     const sig = Signature.fromDER(sigDER)
     
@@ -317,15 +333,22 @@ export function getCommitmentSighash(
   tx: Transaction,
   fundingScript: Script,
   fundingAmount: number
-): Buffer {
+): number[] {
   const sigHashType = TransactionSignature.SIGHASH_ALL | TransactionSignature.SIGHASH_FORKID
   
-  const preimage = tx.signaturePreimage(
-    0,
-    fundingScript,
-    BigNumber.fromNumber(fundingAmount),
-    sigHashType
-  )
+  const preimage = TransactionSignature.formatBip143({
+    sourceTXID: tx.inputs[0].sourceTXID!,
+    sourceOutputIndex: tx.inputs[0].sourceOutputIndex,
+    sourceSatoshis: fundingAmount,
+    transactionVersion: tx.version,
+    otherInputs: tx.inputs.slice(1),
+    outputs: tx.outputs,
+    inputIndex: 0,
+    subscript: fundingScript,
+    inputSequence: tx.inputs[0].sequence || 0xffffffff,
+    lockTime: tx.lockTime,
+    scope: sigHashType
+  })
   
-  return Hash.sha256(preimage)
+  return Hash.sha256(Array.from(preimage))
 }

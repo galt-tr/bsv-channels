@@ -180,9 +180,10 @@ export async function createChannelCommitment(
   
   const signature = myPrivKey.sign(Hash.sha256(Hash.sha256(preimage)))
   
+  const sigDER = signature.toDER()
   return {
     tx: tx.toHex(),
-    signature: signature.toDER(),
+    signature: typeof sigDER === 'string' ? sigDER : Buffer.from(sigDER).toString('hex'),
     txid: tx.id('hex')
   }
 }

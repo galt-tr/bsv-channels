@@ -115,7 +115,7 @@ export async function fetchBEEF(txid: string): Promise<number[]> {
   tx.merklePath = merklePath
   
   const beef = new Beef()
-  beef.mergeTx(tx)
+  beef.mergeTransaction(tx)
   
   return Array.from(beef.toBinary())
 }
