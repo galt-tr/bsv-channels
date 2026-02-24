@@ -17,10 +17,12 @@ function create2of2MultisigScript(pubKey1: PublicKey, pubKey2: PublicKey): Scrip
     a.toString().localeCompare(b.toString())
   )
   
+  const key0Bytes = keys[0].encode(true) as number[]
+  const key1Bytes = keys[1].encode(true) as number[]
   return new Script([
     { op: OP.OP_2 },
-    { op: keys[0].encode(true).length, data: keys[0].encode(true) },
-    { op: keys[1].encode(true).length, data: keys[1].encode(true) },
+    { op: key0Bytes.length, data: key0Bytes },
+    { op: key1Bytes.length, data: key1Bytes },
     { op: OP.OP_2 },
     { op: OP.OP_CHECKMULTISIG }
   ])
@@ -57,7 +59,6 @@ export async function createChannelFunding(
     tx.addInput({
       sourceTXID: utxo.txid,
       sourceOutputIndex: utxo.vout,
-      sourceSatoshis: utxo.satoshis,
       unlockingScriptTemplate: new P2PKH().unlock(fromPrivKey),
       sequence: 0xffffffff
     })
@@ -68,7 +69,7 @@ export async function createChannelFunding(
   const multisigScript = create2of2MultisigScript(myPubKey, peerPubKey)
   
   tx.addOutput({
-    lockingScript: new LockingScript(multisigScript.toASM()),
+    lockingScript: LockingScript.fromASM(multisigScript.toASM()),
     satoshis: capacity
   })
   
@@ -181,7 +182,7 @@ export async function createChannelCommitment(
   
   return {
     tx: tx.toHex(),
-    signature: signature.toHex(),
+    signature: signature.toDER(),
     txid: tx.id('hex')
   }
 }
@@ -207,9 +208,9 @@ export async function finalizeChannelCommitment(
   // Signatures must be in same order as public keys in the script
   const unlockingScript = new UnlockingScript([
     { op: OP.OP_0 },
-    { op: Buffer.from(mySignature, 'hex').length, data: Buffer.from(mySignature, 'hex') },
-    { op: Buffer.from(peerSignature, 'hex').length, data: Buffer.from(peerSignature, 'hex') },
-    { op: Buffer.from(fundingScript, 'hex').length, data: Buffer.from(fundingScript, 'hex') }
+    { op: Buffer.from(mySignature, 'hex').length, data: Array.from(Buffer.from(mySignature, 'hex')) },
+    { op: Buffer.from(peerSignature, 'hex').length, data: Array.from(Buffer.from(peerSignature, 'hex')) },
+    { op: Buffer.from(fundingScript, 'hex').length, data: Array.from(Buffer.from(fundingScript, 'hex')) }
   ])
   
   tx.inputs[0].unlockingScript = unlockingScript

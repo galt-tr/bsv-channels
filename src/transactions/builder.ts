@@ -107,7 +107,7 @@ export class TransactionBuilder {
     const script = new Script(scriptOps)
     
     this.outputs.push({
-      lockingScript: new LockingScript(script.toASM()),
+      lockingScript: LockingScript.fromASM(script.toASM()),
       satoshis
     })
     return this
@@ -122,11 +122,11 @@ export class TransactionBuilder {
     const script = new Script([
       { op: OP.OP_FALSE },
       { op: OP.OP_RETURN },
-      { op: dataBuffer.length, data: dataBuffer }
+      { op: dataBuffer.length, data: Array.from(dataBuffer) }
     ])
     
     this.outputs.push({
-      lockingScript: new LockingScript(script.toASM()),
+      lockingScript: LockingScript.fromASM(script.toASM()),
       satoshis: 0
     })
     return this
@@ -143,13 +143,13 @@ export class TransactionBuilder {
     const scriptOps = [
       { op: OP.OP_FALSE },
       { op: OP.OP_RETURN },
-      ...buffers.map(buf => ({ op: buf.length, data: buf }))
+      ...buffers.map(buf => ({ op: buf.length, data: Array.from(buf) }))
     ]
     
     const script = new Script(scriptOps)
     
     this.outputs.push({
-      lockingScript: new LockingScript(script.toASM()),
+      lockingScript: LockingScript.fromASM(script.toASM()),
       satoshis: 0
     })
     return this
@@ -204,7 +204,6 @@ export class TransactionBuilder {
       tx.addInput({
         sourceTXID: utxo.txid,
         sourceOutputIndex: utxo.vout,
-        sourceSatoshis: utxo.satoshis,
         unlockingScriptTemplate: new P2PKH().unlock(this.privKey),
         sequence: this.sequence
       })

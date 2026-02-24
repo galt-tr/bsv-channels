@@ -136,7 +136,6 @@ export async function createMultiDataOutput(
     tx.addInput({
       sourceTXID: utxo.txid,
       sourceOutputIndex: utxo.vout,
-      sourceSatoshis: utxo.satoshis,
       unlockingScriptTemplate: new P2PKH().unlock(fromPrivKey),
       sequence: 0xffffffff
     })
@@ -152,13 +151,13 @@ export async function createMultiDataOutput(
   const scriptOps = [
     { op: OP.OP_FALSE },
     { op: OP.OP_RETURN },
-    ...buffers.map(buf => ({ op: buf.length, data: buf }))
+    ...buffers.map(buf => ({ op: buf.length, data: Array.from(buf) }))
   ]
   
   const opReturnScript = new Script(scriptOps)
   
   tx.addOutput({
-    lockingScript: new LockingScript(opReturnScript.toASM()),
+    lockingScript: LockingScript.fromASM(opReturnScript.toASM()),
     satoshis: 0
   })
   
